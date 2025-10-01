@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Navbar from '../components/navbar';
 import BookCard from '../components/BookCard';
 
+
 const HomePage = () => {
   const [searchQuery, setSearchQuery] = useState('');
 

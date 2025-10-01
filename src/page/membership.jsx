@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import Navbar from '../components/navbar';
 import SidebarProfile from '../components/sidebar_profile';
+import { useNavigate } from "react-router-dom";
 
 const MembershipPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
 
   // Sample user data
   const userData = {
@@ -70,8 +72,12 @@ const MembershipPage = () => {
     setSearchQuery(e.target.value);
   };
 
+  // Redirect to bayar_denda with price and label
   const handleExtendMembership = (planId) => {
-    console.log('Extending membership with plan:', planId);
+    const plan = membershipPlans.find((p) => p.id === planId);
+    if (plan) {
+      navigate("/bayar_denda", { state: { price: plan.price, label: `Membership ${plan.name}` } });
+    }
   };
 
   return (
@@ -172,7 +178,7 @@ const MembershipPage = () => {
               </div>
 
               {/* Membership Information */}
-              <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="mt-8 sticky bottom-0 bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <div className="flex items-center space-x-3">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />

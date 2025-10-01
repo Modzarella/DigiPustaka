@@ -41,7 +41,7 @@ const RegisterPage = () => {
       {/* Right side - Registration Form */}
       <div className="w-full md:w-1/3 flex flex-col justify-center items-center p-8 bg-white">
           <div className="w-full max-w-md">
-            <h1 className="text-3xl font-bold mb-8">Registrasi Akun!</h1>
+            <h1 className="text-center text-3xl font-bold mb-8">Registrasi Akun!</h1>
             
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Name Input */}

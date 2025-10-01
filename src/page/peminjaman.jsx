@@ -9,6 +9,7 @@ import filosofiTerasCover from '../assets/filosofi-teras.jpg';
 
 const PeminjamanPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [showSplash, setShowSplash] = useState(false);
 
   // Sample books data
   const books = [
@@ -43,58 +44,79 @@ const PeminjamanPage = () => {
   };
 
   const handleBorrow = (bookId) => {
-    // Handle borrow action
-    console.log('Borrowing book:', bookId);
+    setShowSplash(true);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <div className="bg-white shadow-lg shadow-gray-200/50 border-b border-gray-100 relative z-50">
-        <Navbar searchQuery={searchQuery} onSearchChange={handleSearchChange} />
-      </div>
+    <div className={`min-h-screen bg-gray-100 relative ${showSplash ? "overflow-hidden" : ""}`}>
+      {/* Splash screen overlay */}
+      {showSplash && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-90 backdrop-blur-sm">
+          <div className="bg-white rounded-lg shadow-lg px-10 py-12 flex flex-col items-center">
+            <svg className="h-16 w-16 text-green-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" className="text-green-200" fill="white"/>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2l4-4" className="text-green-500" stroke="currentColor" />
+            </svg>
+            <h2 className="text-2xl font-bold text-green-600 mb-2">Peminjaman Berhasil!</h2>
+            <p className="text-gray-700 mb-4">Buku berhasil dipinjam. Silakan cek daftar peminjaman Anda.</p>
+            <button
+              onClick={() => setShowSplash(false)}
+              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
+            >
+              Tutup
+            </button>
+          </div>
+        </div>
+      )}
       
-      <div className="flex h-[calc(100vh-64px)]">
-        <div className="flex w-full">
-          {/* Sidebar */}
-          <SidebarBooks activeTab="peminjaman" />
+      <div className="min-h-screen bg-gray-50 flex flex-col">
+        <div className="bg-white shadow-lg shadow-gray-200/50 border-b border-gray-100 relative z-50">
+          <Navbar searchQuery={searchQuery} onSearchChange={handleSearchChange} />
+        </div>
+        
+        <div className="flex h-[calc(100vh-64px)]">
+          <div className="flex w-full">
+            {/* Sidebar */}
+            <SidebarBooks activeTab="peminjaman" />
 
-          {/* Main Content */}
-          <div className="flex-1 bg-white shadow-lg overflow-hidden">
-            <div className="p-8 h-full overflow-y-auto">
-              <h2 className="text-2xl font-bold mb-6 sticky top-0 bg-white py-4 z-10">Peminjaman Buku</h2>
-              
-              <div className="space-y-6">
-                {books.map((book) => (
-                  <div key={book.id} className="flex items-center gap-6 bg-gray-50 p-6 rounded-lg">
-                    <div className="flex-shrink-0">
-                      <img
-                        src={book.cover}
-                        alt={book.title}
-                        className="w-28 h-40 object-cover rounded-md shadow-md"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="text-xl font-semibold">{book.title}</h3>
-                          <p className="text-gray-600">{book.author}</p>
-                          <p className="text-sm text-gray-500">{book.year}</p>
+            {/* Main Content */}
+            <div className="flex-1 bg-white shadow-lg overflow-hidden">
+              <div className="p-8 h-full overflow-y-auto">
+                <h2 className="text-2xl font-bold mb-6 sticky top-0 bg-white py-4 z-10">Peminjaman Buku</h2>
+                
+                <div className="space-y-6">
+                  {books.map((book) => (
+                    <div key={book.id} className="flex items-center gap-6 bg-gray-50 p-6 rounded-lg">
+                      <div className="flex-shrink-0">
+                        <img
+                          src={book.cover}
+                          alt={book.title}
+                          className="w-28 h-40 object-cover rounded-md shadow-md"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h3 className="text-xl font-semibold">{book.title}</h3>
+                            <p className="text-gray-600">{book.author}</p>
+                            <p className="text-sm text-gray-500">{book.year}</p>
+                          </div>
+                          <button
+                            onClick={() => handleBorrow(book.id)}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                              book.status === 'Pinjam'
+                                ? 'bg-green-500 text-white hover:bg-green-600'
+                                : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                            }`}
+                            disabled={book.status === 'Dipinjam'}
+                          >
+                            {book.status}
+                          </button>
                         </div>
-                        <button
-                          onClick={() => handleBorrow(book.id)}
-                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                            book.status === 'Pinjam'
-                              ? 'bg-green-500 text-white hover:bg-green-600'
-                              : 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                          }`}
-                          disabled={book.status === 'Dipinjam'}
-                        >
-                          {book.status}
-                        </button>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
           </div>

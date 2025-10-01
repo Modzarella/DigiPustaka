@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from '../components/navbar';
 import SidebarProfile from '../components/sidebar_profile';
+import { Link, useNavigate } from 'react-router-dom';
 
 // Import book covers
 import laskarPelangiCover from '../assets/laskar-pelangi.jpg';
@@ -8,6 +9,7 @@ import atomicHabitsCover from '../assets/atomic-habits.jpg';
 
 const RiwayatUser = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
 
   // Sample user data - should be fetched from backend in real application
   const userData = {
@@ -166,9 +168,9 @@ const RiwayatUser = () => {
                         }`}>
                           {book.status}
                         </span>
-                        <button className="text-sm text-gray-600 hover:text-black transition-colors">
+                        <Link to="/ulasan" className="text-sm text-blue-600 hover:underline">
                           Tulis Ulasan
-                        </button>
+                        </Link>
                       </div>
                     </div>
                   </div>

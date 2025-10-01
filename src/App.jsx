@@ -14,6 +14,8 @@ import PengembalianPage from './page/pengembalian';
 import DendaPage from './page/denda';
 import MembershipPage from './page/membership';
 import BookDetail from './page/book_detail';
+import BayarDenda from './page/bayar_denda'; // Ubah penamaan agar PascalCase
+import AdminPage from './page/admin_page';
 
 function App() {
   return (
@@ -34,6 +36,8 @@ function App() {
         <Route path="/denda" element={<DendaPage />} />
         <Route path="/membership" element={<MembershipPage />} />
         <Route path="/book/:id" element={<BookDetail />} />
+        <Route path="/bayar_denda" element={<BayarDenda />} />
+        <Route path="/admin" element={<AdminPage />} />
       </Routes>
     </Router>
   );

@@ -8,6 +8,7 @@ import filosofiTerasCover from '../assets/filosofi-teras.jpg';
 
 const PengembalianPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [showSplash, setShowSplash] = useState(false);
 
   // Sample borrowed books data
   const borrowedBooks = [
@@ -36,12 +37,31 @@ const PengembalianPage = () => {
   };
 
   const handleReturn = (bookId) => {
-    // Handle return action
-    console.log('Returning book:', bookId);
+    setShowSplash(true);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className={`min-h-screen bg-gray-50 flex flex-col relative ${showSplash ? "overflow-hidden" : ""}`}>
+      {/* Splash screen overlay */}
+      {showSplash && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-90 backdrop-blur-sm">
+          <div className="bg-white rounded-lg shadow-lg px-10 py-12 flex flex-col items-center">
+            <svg className="h-16 w-16 text-green-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" className="text-green-200" fill="white"/>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2l4-4" className="text-green-500" stroke="currentColor" />
+            </svg>
+            <h2 className="text-2xl font-bold text-green-600 mb-2">Pengembalian Berhasil!</h2>
+            <p className="text-gray-700 mb-4">Buku berhasil dikembalikan. Terima kasih telah mengembalikan tepat waktu.</p>
+            <button
+              onClick={() => setShowSplash(false)}
+              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
+            >
+              Tutup
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="bg-white shadow-lg shadow-gray-200/50 border-b border-gray-100 relative z-50">
         <Navbar searchQuery={searchQuery} onSearchChange={handleSearchChange} />
       </div>

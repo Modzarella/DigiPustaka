@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from '../components/navbar';
 import SidebarProfile from '../components/sidebar_profile';
+import { useNavigate } from "react-router-dom";
 
 const DendaPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -48,13 +49,23 @@ const DendaPage = () => {
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
+  const navigate = useNavigate();
 
-  const handlePayFine = (fineId) => {
-    console.log('Paying fine:', fineId);
+  // Helper to navigate to payment with price and label
+  const goToPayment = (price, label) => {
+    navigate("/bayar_denda", { state: { price, label } });
   };
 
-  const handlePayAllFines = () => {
-    console.log('Paying all fines');
+  const handlePayFine = (fineId) => {
+    const fine = userData.unpaidFines.find((f) => f.id === fineId);
+    if (fine) {
+      goToPayment(fine.amount, fine.bookTitle);
+    }
+  };
+
+  const handlePayAllFines = (e) => {
+    e.preventDefault();
+    goToPayment(userData.totalFine, "Bayar Semua Denda");
   };
 
   return (
@@ -78,9 +89,9 @@ const DendaPage = () => {
                     <span className="text-lg font-medium text-red-800">Total Denda</span>
                     <span className="text-2xl font-bold text-red-600">Rp {userData.totalFine.toLocaleString()}</span>
                   </div>
-                  <button 
+                  <button
+                    className="w-full block text-center bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition-colors"
                     onClick={handlePayAllFines}
-                    className="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition-colors"
                   >
                     Bayar Semua Denda
                   </button>
@@ -105,8 +116,8 @@ const DendaPage = () => {
                             Rp {fine.amount.toLocaleString()}
                           </p>
                           <button
-                            onClick={() => handlePayFine(fine.id)}
                             className="px-4 py-2 bg-black text-white rounded-lg text-sm hover:bg-gray-800 transition-colors"
+                            onClick={() => handlePayFine(fine.id)}
                           >
                             Bayar Denda
                           </button>
