@@ -3,6 +3,7 @@ import AdminUsers from "./admin_users";
 import AdminBuku from "./admin_buku";
 import AdminRiwayat from "./admin_riwayat";
 import NavbarAdmin from "../components/navbar_admin";
+import AdminInfo from "./admin_info";
 
 // Dummy data for books and users
 const initialBooks = [
@@ -68,6 +69,12 @@ export default function AdminPage() {
         {activeTab === "borrow" && (
           <AdminRiwayat borrowed={borrowed} />
         )}
+
+        {/* Admin Info */}
+        {activeTab === "info" && (
+          <AdminInfo />
+          )}
+
       </div>
     </div>
   );

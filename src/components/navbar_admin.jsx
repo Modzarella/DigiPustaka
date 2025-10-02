@@ -48,6 +48,20 @@ export default function NavbarAdmin({ activeTab, setActiveTab }) {
           >
             Riwayat Peminjaman
           </button>
+          
+          <button
+            className={`px-4 py-2 rounded font-semibold transition-colors ${
+              activeTab === "info"
+                ? "bg-black text-white"
+                : "text-black hover:bg-gray-200"
+            }`}
+            onClick={() => setActiveTab("info")}
+          >
+            Informasi Admin
+          </button>
+
+
+
         </div>
       </div>
     </nav>

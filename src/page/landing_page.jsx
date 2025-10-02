@@ -15,9 +15,10 @@ const LandingPage = () => {
             <span className="text-2xl font-bold">DigiPustaka</span>
           </Link>
           <div className="space-x-6">
-            <a href="#about" className="text-gray-600 hover:text-gray-900">Tentang</a>
-            <a href="#features" className="text-gray-600 hover:text-gray-900">Fitur</a>
-            <a href="#contact" className="text-gray-600 hover:text-gray-900">Kontak</a>
+            <Link to="/tentang" className="text-gray-600 hover:text-gray-900">Tentang</Link>
+            <Link to="/fitur" className="text-gray-600 hover:text-gray-900">Fitur</Link>
+            <Link to="/kontak" className="text-gray-600 hover:text-gray-900">Kontak</Link>
+
             <Link to="/login" className="px-6 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">Login</Link>
             <Link to="/register" className="px-6 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors">Registrasi</Link>
           </div>

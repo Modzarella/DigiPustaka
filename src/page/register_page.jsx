@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const RegisterPage = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -9,6 +10,8 @@ const RegisterPage = () => {
     password: '',
     confirmPassword: ''
   });
+
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -26,6 +29,7 @@ const RegisterPage = () => {
       return;
     }
     console.log('Register attempt with:', formData);
+    navigate('/login');
   };
 
   return (

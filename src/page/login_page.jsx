@@ -19,21 +19,27 @@ const LoginPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log('Login attempt with:', formData);
-    // Navigate to home page after login
-    navigate('/home');
+
+    const { email, password } = formData;
+
+    // Verifikasi hardcode admin
+    if (email === "admin@gmail.com" && password === "admin123") {
+      navigate('/admin');
+    } else {
+      navigate('/home');
+    }
   };
 
   return (
     <div className="min-h-screen flex">
       {/* Left side - Book Image */}
-      <div className="hidden md:block w-2/3 bg-cover bg-center" 
-           style={{
-             backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
-             url('/src/assets/bookshelf-bg.jpg')`
-           }}>
-      </div>
+      <div
+        className="hidden md:block w-2/3 bg-cover bg-center"
+        style={{
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+          url('/src/assets/bookshelf-bg.jpg')`
+        }}
+      ></div>
 
       {/* Right side - Login Form */}
       <div className="w-full md:w-1/3 flex flex-col justify-center items-center p-8 bg-white">
@@ -42,7 +48,6 @@ const LoginPage = () => {
           
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-
               <input
                 type="email"
                 id="email"
@@ -56,7 +61,6 @@ const LoginPage = () => {
             </div>
 
             <div>
-
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}

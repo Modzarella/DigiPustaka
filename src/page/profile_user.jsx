@@ -1,21 +1,61 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/navbar';
 import SidebarProfile from '../components/sidebar_profile';
 
+//
+// Reusable Modal (accessible-ish: close on ESC, lock scroll while open)
+//
+
+
+const Modal = ({ isOpen, onClose, title, children }) => {
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const onKey = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', onKey);
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden'; // lock scroll
+
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4">
+      <div className="bg-white rounded-2xl shadow-lg w-full max-w-md p-6 relative">
+        <button
+          type="button"
+          aria-label="Tutup"
+          onClick={onClose}
+          className="absolute top-3 right-3 text-gray-500 hover:text-black"
+        >
+          ✕
+        </button>
+        {title && <h3 className="text-lg font-semibold mb-4">{title}</h3>}
+        <div>{children}</div>
+      </div>
+    </div>
+  );
+};
+
 const ProfileUser = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState('profile');
   const navigate = useNavigate();
 
-  // Sample user data - in a real app, this would come from your backend
-  const userData = {
+  // ---- initial sample user (in real app: fetch from backend) ----
+  const initialUser = {
     name: 'Mamat Gunshop',
     email: 'mamatguntank@gmail.com',
-    password: '••••••••••••',
+    passwordMasked: '••••••••••••',
     denda: 'Rp 3.000.000',
     membership: '12 Bulan',
-    profilePicture: null,
+    profilePicture: null, // can be URL or null
     borrowedBooks: [
       { id: 1, title: 'Laskar Pelangi', dueDate: '2025-10-15' },
       { id: 2, title: 'Atomic Habits', dueDate: '2025-10-20' }
@@ -26,98 +66,193 @@ const ProfileUser = () => {
     ]
   };
 
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
+  // ---- main state ----
+  const [user, setUser] = useState(initialUser);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeTab, setActiveTab] = useState('profile');
+
+  // modal control: null | 'name' | 'email' | 'password' | 'photo'
+  const [openModal, setOpenModal] = useState(null);
+
+  // form states for modals
+  const [nameForm, setNameForm] = useState(user.name);
+  const [emailForm, setEmailForm] = useState(user.email);
+  const [passwordForm, setPasswordForm] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [photoFile, setPhotoFile] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState(user.profilePicture);
+
+  // errors for forms
+  const [formErrors, setFormErrors] = useState({});
+
+  // keep local form fields in sync when user changes (or when modal opens)
+  const openEdit = useCallback((type) => {
+    setFormErrors({});
+    if (type === 'name') {
+      setNameForm(user.name || '');
+    } else if (type === 'email') {
+      setEmailForm(user.email || '');
+    } else if (type === 'password') {
+      setPasswordForm('');
+      setConfirmPassword('');
+    } else if (type === 'photo') {
+      setPhotoFile(null);
+      setPhotoPreview(user.profilePicture || null);
+    }
+    setOpenModal(type);
+  }, [user]);
+
+  useEffect(() => {
+    // cleanup object URL when component unmounts or when preview changes
+    return () => {
+      if (photoPreview && typeof photoPreview === 'string' && photoPreview.startsWith('blob:')) {
+        try { URL.revokeObjectURL(photoPreview); } catch(e) {}
+      }
+    };
+  }, [photoPreview]);
+
+  // input handlers
+  const handlePhotoChange = (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    setPhotoFile(file);
+    setPhotoPreview(url);
+    setFormErrors(prev => ({ ...prev, photo: null }));
   };
 
-  const sidebarItems = [
-    { id: 'profile', label: 'Profile', icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-      </svg>
-    )},
-    { id: 'history', label: 'Riwayat', icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    )},
-    { id: 'fine', label: 'Denda', icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    )},
-    { id: 'membership', label: 'Membership', icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-      </svg>
-    )},
-    { id: 'books', label: 'Buku', icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-      </svg>
-    )}
-  ];
+  // ---- validation helpers ----
+  const isValidEmail = (value) => /\S+@\S+\.\S+/.test(value);
 
+  // ---- save handlers ----
+  const saveName = (e) => {
+    e.preventDefault();
+    if (!nameForm.trim()) {
+      setFormErrors({ name: 'Nama harus diisi' });
+      return;
+    }
+    setUser(prev => ({ ...prev, name: nameForm.trim() }));
+    setOpenModal(null);
+    alert('Nama berhasil diubah');
+  };
+
+  const saveEmail = (e) => {
+    e.preventDefault();
+    if (!emailForm.trim()) {
+      setFormErrors({ email: 'Email harus diisi' });
+      return;
+    }
+    if (!isValidEmail(emailForm.trim())) {
+      setFormErrors({ email: 'Format email tidak valid' });
+      return;
+    }
+    setUser(prev => ({ ...prev, email: emailForm.trim() }));
+    setOpenModal(null);
+    alert('Email berhasil diubah');
+  };
+
+  const savePassword = (e) => {
+    e.preventDefault();
+    if (!passwordForm) {
+      setFormErrors({ password: 'Password harus diisi' });
+      return;
+    }
+    if (passwordForm.length < 8) {
+      setFormErrors({ password: 'Password minimal 8 karakter' });
+      return;
+    }
+    if (passwordForm !== confirmPassword) {
+      setFormErrors({ password: 'Password dan konfirmasi tidak sama' });
+      return;
+    }
+    // In a real app: call backend to change password. Here we just mask.
+    setUser(prev => ({ ...prev, passwordMasked: '••••••••••••' }));
+    setOpenModal(null);
+    alert('Password berhasil diubah');
+  };
+
+  const savePhoto = (e) => {
+    e.preventDefault();
+    if (!photoFile && !photoPreview) {
+      setFormErrors({ photo: 'Pilih foto terlebih dahulu' });
+      return;
+    }
+    // In a real app: upload photoFile to server and save returned URL.
+    // For demo: we store preview URL in user.profilePicture (objectURL)
+    setUser(prev => ({ ...prev, profilePicture: photoPreview }));
+    setOpenModal(null);
+    alert('Foto profil berhasil diperbarui');
+  };
+
+  // ---- JSX rendering ----
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <div className="bg-white shadow-lg shadow-gray-200/50 border-b border-gray-100 relative z-50">
-        <Navbar searchQuery={searchQuery} onSearchChange={handleSearchChange} />
+        <Navbar searchQuery={searchQuery} onSearchChange={(e) => setSearchQuery(e.target.value)} />
       </div>
-      
-      <div className="flex h-[calc(100vh-64px)]"> {/* 64px is navbar height */}
-        <div className="flex w-full">
-          {/* Sidebar */}
-          <SidebarProfile activeTab="profile" userData={userData} />
 
-          {/* Main Content */}
-          <div className="flex-1 bg-white shadow-lg">
+      <div className="flex h-[calc(100vh-64px)]">
+        <div className="flex w-full">
+          {/* Sidebar (existing component) */}
+          <SidebarProfile activeTab={activeTab} userData={user} />
+
+          {/* Main content */}
+          <div className="flex-1 bg-white shadow-lg overflow-auto">
             <div className="p-6">
               <h2 className="text-2xl font-bold mb-6">Informasi Profil</h2>
-              
+
               <div className="space-y-6">
+                {/* Nama */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-1">
-                    Nama
-                  </label>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">Nama</label>
                   <div className="flex items-center justify-between bg-gray-50 px-4 py-2 rounded-lg">
-                    <span>{userData.name}</span>
-                    <button className="text-sm text-gray-500 hover:text-black transition-colors">
+                    <span>{user.name}</span>
+                    <button
+                      type="button"
+                      onClick={() => openEdit('name')}
+                      className="text-sm text-gray-500 hover:text-black transition-colors"
+                    >
                       Edit
                     </button>
                   </div>
                 </div>
 
+                {/* Email */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-1">
-                    Email
-                  </label>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">Email</label>
                   <div className="flex items-center justify-between bg-gray-50 px-4 py-2 rounded-lg">
-                    <span>{userData.email}</span>
-                    <button className="text-sm text-gray-500 hover:text-black transition-colors">
+                    <span>{user.email}</span>
+                    <button
+                      type="button"
+                      onClick={() => openEdit('email')}
+                      className="text-sm text-gray-500 hover:text-black transition-colors"
+                    >
                       Edit
                     </button>
                   </div>
                 </div>
 
+                {/* Password */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-1">
-                    Password
-                  </label>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">Password</label>
                   <div className="flex items-center justify-between bg-gray-50 px-4 py-2 rounded-lg">
-                    <span>{userData.password}</span>
-                    <button className="text-sm text-gray-500 hover:text-black transition-colors">
+                    <span>{user.passwordMasked}</span>
+                    <button
+                      type="button"
+                      onClick={() => openEdit('password')}
+                      className="text-sm text-gray-500 hover:text-black transition-colors"
+                    >
                       Ubah
                     </button>
                   </div>
                 </div>
 
+                {/* Denda */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-1">
-                    Denda
-                  </label>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">Denda</label>
                   <div className="flex items-center justify-between bg-gray-50 px-4 py-2 rounded-lg">
-                    <span className="text-red-500 font-medium">{userData.denda}</span>
-                    <button 
+                    <span className="text-red-500 font-medium">{user.denda}</span>
+                    <button
                       onClick={() => navigate('/denda')}
                       className="text-sm bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
                     >
@@ -126,13 +261,12 @@ const ProfileUser = () => {
                   </div>
                 </div>
 
+                {/* Membership */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-1">
-                    Membership
-                  </label>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">Membership</label>
                   <div className="flex items-center justify-between bg-gray-50 px-4 py-2 rounded-lg">
-                    <span>{userData.membership}</span>
-                    <button 
+                    <span>{user.membership}</span>
+                    <button
                       onClick={() => navigate('/membership')}
                       className="text-sm bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
                     >
@@ -141,11 +275,12 @@ const ProfileUser = () => {
                   </div>
                 </div>
 
+                {/* Borrowed books (example) */}
                 {activeTab === 'books' && (
                   <div className="mt-8">
                     <h3 className="text-lg font-semibold mb-4">Buku yang Dipinjam</h3>
                     <div className="space-y-4">
-                      {userData.borrowedBooks.map(book => (
+                      {user.borrowedBooks.map(book => (
                         <div key={book.id} className="flex items-center justify-between bg-gray-50 px-4 py-3 rounded-lg">
                           <span>{book.title}</span>
                           <span className="text-sm text-gray-500">Jatuh tempo: {book.dueDate}</span>
@@ -157,8 +292,98 @@ const ProfileUser = () => {
               </div>
             </div>
           </div>
+
         </div>
       </div>
+
+      {/* ---------- MODALS ---------- */}
+
+      {/* Edit Name */}
+      <Modal isOpen={openModal === 'name'} onClose={() => setOpenModal(null)} title="Ubah Nama">
+        <form onSubmit={saveName} className="space-y-4">
+          <input
+            name="name"
+            type="text"
+            value={nameForm}
+            onChange={(e) => { setNameForm(e.target.value); setFormErrors(prev => ({ ...prev, name: null })); }}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-black"
+            placeholder="Masukkan nama baru"
+          />
+          {formErrors.name && <p className="text-red-500 text-sm">{formErrors.name}</p>}
+          <div className="flex justify-end space-x-3">
+            <button type="button" onClick={() => setOpenModal(null)} className="px-4 py-2 bg-gray-200 rounded-lg">Batal</button>
+            <button type="submit" className="px-4 py-2 bg-black text-white rounded-lg">Simpan</button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Edit Email */}
+      <Modal isOpen={openModal === 'email'} onClose={() => setOpenModal(null)} title="Ubah Email">
+        <form onSubmit={saveEmail} className="space-y-4">
+          <input
+            name="email"
+            type="email"
+            value={emailForm}
+            onChange={(e) => { setEmailForm(e.target.value); setFormErrors(prev => ({ ...prev, email: null })); }}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-black"
+            placeholder="Masukkan email baru"
+          />
+          {formErrors.email && <p className="text-red-500 text-sm">{formErrors.email}</p>}
+          <div className="flex justify-end space-x-3">
+            <button type="button" onClick={() => setOpenModal(null)} className="px-4 py-2 bg-gray-200 rounded-lg">Batal</button>
+            <button type="submit" className="px-4 py-2 bg-black text-white rounded-lg">Simpan</button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Edit Password */}
+      <Modal isOpen={openModal === 'password'} onClose={() => setOpenModal(null)} title="Ubah Password">
+        <form onSubmit={savePassword} className="space-y-4">
+          <input
+            name="password"
+            type="password"
+            value={passwordForm}
+            onChange={(e) => { setPasswordForm(e.target.value); setFormErrors(prev => ({ ...prev, password: null })); }}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-black"
+            placeholder="Password baru (min 8 karakter)"
+          />
+          <input
+            name="confirmPassword"
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => { setConfirmPassword(e.target.value); setFormErrors(prev => ({ ...prev, password: null })); }}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-black"
+            placeholder="Konfirmasi password"
+          />
+          {formErrors.password && <p className="text-red-500 text-sm">{formErrors.password}</p>}
+          <div className="flex justify-end space-x-3">
+            <button type="button" onClick={() => setOpenModal(null)} className="px-4 py-2 bg-gray-200 rounded-lg">Batal</button>
+            <button type="submit" className="px-4 py-2 bg-black text-white rounded-lg">Simpan</button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Edit Photo */}
+      <Modal isOpen={openModal === 'photo'} onClose={() => setOpenModal(null)} title="Ubah Foto Profil">
+        <form onSubmit={savePhoto} className="space-y-4">
+          <div className="flex flex-col items-center space-y-4">
+            {photoPreview ? (
+              <img src={photoPreview} alt="Preview" className="w-32 h-32 rounded-full object-cover" />
+            ) : (
+              <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center">
+                <span className="text-gray-500">Preview</span>
+              </div>
+            )}
+            <input type="file" accept="image/*" onChange={handlePhotoChange} />
+            {formErrors.photo && <p className="text-red-500 text-sm">{formErrors.photo}</p>}
+          </div>
+
+          <div className="flex justify-end space-x-3">
+            <button type="button" onClick={() => setOpenModal(null)} className="px-4 py-2 bg-gray-200 rounded-lg">Batal</button>
+            <button type="submit" className="px-4 py-2 bg-black text-white rounded-lg">Simpan</button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 };
