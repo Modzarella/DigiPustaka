@@ -3,10 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/navbar';
 import SidebarProfile from '../components/sidebar_profile';
 
-//
-// Reusable Modal (accessible-ish: close on ESC, lock scroll while open)
-//
-
 
 const Modal = ({ isOpen, onClose, title, children }) => {
   useEffect(() => {
@@ -28,8 +24,8 @@ const Modal = ({ isOpen, onClose, title, children }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4">
-      <div className="bg-white rounded-2xl shadow-lg w-full max-w-md p-6 relative">
+<div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm transition-opacity duration-500 hover:opacity-100 opacity-0">
+        <div className="bg-white rounded-2xl shadow-lg w-full max-w-md p-6 relative">
         <button
           type="button"
           aria-label="Tutup"

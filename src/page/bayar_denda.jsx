@@ -7,7 +7,6 @@ export default function BayarDenda() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Check if price or label is missing
   const isInvalid = !location.state || typeof location.state.price === "undefined" || typeof location.state.label === "undefined";
 
   const [form, setForm] = useState({
@@ -38,7 +37,6 @@ export default function BayarDenda() {
     }
     if (name === "expiry") {
       newValue = value.replace(/[^0-9/]/g, "");
-      // Auto-insert slash after 2 digits
       if (/^\d{3,}$/.test(newValue)) {
         newValue = newValue.replace(/^(\d{2})(\d{1,2}).*/, "$1/$2");
       }
@@ -92,7 +90,6 @@ export default function BayarDenda() {
 
   return (
     <div className={`min-h-screen bg-gray-100 relative ${showSplash ? "overflow-hidden" : ""}`}>
-      {/* Splash screen overlay */}
       {showSplash && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-90 backdrop-blur-sm">
           <div className="bg-white rounded-lg shadow-lg px-10 py-12 flex flex-col items-center">
@@ -112,13 +109,10 @@ export default function BayarDenda() {
         </div>
       )}
 
-      {/* Blur background when splash is shown */}
       <div className={showSplash ? "pointer-events-none filter blur-sm select-none" : ""}>
-        {/* Navbar from components */}
         <Navbar searchQuery={searchQuery} onSearchChange={setSearchQuery} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-8">
-          {/* Left - Invoice */}
           <div className="bg-white p-6 shadow rounded">
             <h2 className=" border-b text-lg font-semibold mb-4">DigiPustaka</h2>
             <div className="padding-t-2 flex justify-between border-b py-2 mb-2">
@@ -131,12 +125,10 @@ export default function BayarDenda() {
             </div>
           </div>
 
-          {/* Right - Payment Form */}
           <form
             onSubmit={handleSubmit}
             className="bg-gray-200 p-6 shadow rounded space-y-4"
           >
-            {/* Payment Method Radio Buttons */}
             <div>
               <label className="block font-medium mb-2">Metode Pembayaran</label>
               <div className="flex flex-col gap-2">
@@ -176,7 +168,6 @@ export default function BayarDenda() {
               </div>
             </div>
 
-            {/* Card fields (shown only if credit card selected) */}
             {paymentMethod === "credit_card" && (
               <>
                 <div>
@@ -230,7 +221,6 @@ export default function BayarDenda() {
               </>
             )}
 
-            {/* E-Wallet input */}
             {paymentMethod === "ewallet" && (
               <div>
                 <label className="block font-medium mb-1">Nomor E-Wallet</label>
@@ -248,7 +238,6 @@ export default function BayarDenda() {
               </div>
             )}
 
-            {/* QRIS image */}
             {paymentMethod === "qris" && (
               <div className="flex flex-col items-center">
                 <img
@@ -260,7 +249,6 @@ export default function BayarDenda() {
               </div>
             )}
 
-            {/* Alamat hanya tampil jika credit card */}
             {paymentMethod === "credit_card" && (
               <div>
                 <label className="block font-medium mb-1">Alamat</label>
