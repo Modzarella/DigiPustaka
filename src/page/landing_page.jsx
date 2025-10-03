@@ -18,8 +18,7 @@ const LandingPage = () => {
             <Link to="/tentang" className="text-gray-600 hover:text-gray-900">Tentang</Link>
             <Link to="/fitur" className="text-gray-600 hover:text-gray-900">Fitur</Link>
             <Link to="/kontak" className="text-gray-600 hover:text-gray-900">Kontak</Link>
-
-            <Link to="/login" className="px-6 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">Login</Link>
+            <Link to="/login" className="px-6 py-2 bg-green-400 text-white rounded-lg hover:bg-green-800 transition-colors">Login</Link>
             <Link to="/register" className="px-6 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors">Registrasi</Link>
           </div>
         </div>
@@ -28,12 +27,12 @@ const LandingPage = () => {
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-20">
         <div className="text-center">
-          <h1 className="text-5xl font-bold mb-6 text-gray-900">Selamat Datang di DigiPustaka</h1>
+          <h1 class="bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text text-5xl font-bold pb-5">Selamat datang di Digipustaka!</h1>
           <p className="text-xl mb-10 text-gray-600 max-w-3xl mx-auto">
             Platform perpustakaan digital untuk membaca, berdiskusi, dan menemukan buku terbaik untukmu.
           </p>
           <div className="space-x-4">
-            <Link to="/login" className="inline-block bg-black text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors">
+            <Link to="/login" className="inline-block bg-green-400 text-white px-8 py-3 rounded-lg font-semibold shadow-xl hover:bg-green-800 transition-colors">
               Mulai Jelajah
             </Link>
             <Link to="/register" className="inline-block bg-gray-100 text-gray-800 px-8 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors">
@@ -44,7 +43,7 @@ const LandingPage = () => {
       </div>
 
       {/* Features Section */}
-      <div id="features" className="container mx-auto px-4 py-20 bg-gray-50">
+      <div id="features" className="container mx-auto px-3 py-6 text-white">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
             <div className="text-4xl mb-4">📚</div>

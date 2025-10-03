@@ -114,9 +114,6 @@ const RegisterPage = () => {
 
               {/* Confirm Password Input */}
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                  Konfirmasi Password
-                </label>
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
@@ -133,9 +130,9 @@ const RegisterPage = () => {
 
               <button
                 type="submit"
-                className="w-full bg-black text-white py-2 px-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                className="w-full bg-green-400 text-white py-2 px-4 rounded-md hover:bg-green-800 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
               >
-                Selesai
+                Register
               </button>
             </form>
 

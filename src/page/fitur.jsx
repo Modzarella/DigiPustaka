@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import Footer from '../components/footer';
 import { HiMiniBuildingLibrary } from "react-icons/hi2";
 
+
+
 const Fitur = () => {
   const fiturList = [
     { icon: "📚", title: "Akses Ribuan Buku", desc: "Nikmati koleksi buku digital dari berbagai genre dan penulis." },
@@ -24,9 +26,9 @@ const Fitur = () => {
           </Link>
           <div className="space-x-6">
             <Link to="/tentang" className="text-gray-600 hover:text-gray-900">Tentang</Link>
-            <Link to="/fitur" className="text-gray-900 font-semibold">Fitur</Link>
+            <Link to="/fitur" className="text-gray-900 font-bold">Fitur</Link>
             <Link to="/kontak" className="text-gray-600 hover:text-gray-900">Kontak</Link>
-            <Link to="/login" className="px-6 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">Login</Link>
+            <Link to="/login" className="px-6 py-2 bg-green-400 text-white rounded-lg hover:bg-green-800 transition-colors">Login</Link>
             <Link to="/register" className="px-6 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors">Registrasi</Link>
           </div>
         </div>
@@ -34,7 +36,7 @@ const Fitur = () => {
 
       {/* Hero */}
       <div className="container mx-auto px-4 py-20 text-center">
-        <h1 className="text-5xl font-bold mb-6 text-gray-900">Fitur Utama</h1>
+        <h1 class="bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text text-5xl font-bold pb-5">Fitur Utama</h1>
         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
           Fitur-fitur unggulan yang tersedia di DigiPustaka untuk menunjang
           pengalaman literasi digitalmu.
