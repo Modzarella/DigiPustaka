@@ -1,7 +1,6 @@
 import React from "react";
 
 export default function AdminInfo() {
-  // Dummy data untuk informasi admin
   const admins = [
     {
       name: "Asep Kejepit",

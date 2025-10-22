@@ -179,8 +179,6 @@ const UlasanPage = () => {
       </div>
     </div>
 
-
-
             {/* Review Text */}
             <div className="mb-4">
               <label className="block text-gray-700 mb-2">Ulasan Anda</label>

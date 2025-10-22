@@ -8,11 +8,9 @@ const BookDetail = () => {
   const { id } = useParams();
   
   useEffect(() => {
-    // In a real app, you would fetch the book data based on the id
     console.log('Book ID:', id);
   }, [id]);
 
-  // Sample book data
   const bookData = {
     id: 1,
     title: 'Hujan',

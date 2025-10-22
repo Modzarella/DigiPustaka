@@ -4,12 +4,14 @@ import { Link, useNavigate } from 'react-router-dom';
 const RegisterPage = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
-  });
+const [formData, setFormData] = useState({
+  name: '',
+  email: '',
+  phone: '',
+  address: '',
+  password: '',
+  confirmPassword: ''
+});
 
 
 
@@ -21,20 +23,54 @@ const RegisterPage = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle registration logic here
-    if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match!');
-      return;
+ const handleSubmit = (e) => {
+  e.preventDefault();
+
+  if (formData.password !== formData.confirmPassword) {
+    alert('Passwords do not match!');
+    return;
+  }
+
+  fetch("http://localhost/digipustaka/api/register.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      membership_id: Math.floor(Math.random() * 1000000) + 1,
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      level: "user",
+      phone: formData.phone,
+      address: formData.address,
+      membership_date: new Date().toISOString().split('T')[0],
+      expiration_date: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
+
+
+    }),
+  })
+    .then(async res => {
+    const text = await res.text();
+    try {
+      const data = JSON.parse(text);
+      if (data.status === "success") {
+        alert("Registrasi berhasil!");
+        navigate("/login");
+      } else {
+        alert("Registrasi gagal: " + (data.message || "Silakan coba lagi."));
+      }
+    } catch (err) {
+      console.error("Invalid JSON:", text);
+      alert("Server returned invalid response.");
     }
-    console.log('Register attempt with:', formData);
-    navigate('/login');
-  };
+  })
+  .catch(error => {
+    console.error("Registration error:", error);
+    alert("Terjadi kesalahan saat registrasi.");
+  });
+};
 
   return (
     <div className="min-h-screen flex">
-      {/* Left side - Book Image */}
       <div className="hidden md:block w-2/3 bg-cover bg-center" 
            style={{
              backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
@@ -42,13 +78,11 @@ const RegisterPage = () => {
            }}>
       </div>
 
-      {/* Right side - Registration Form */}
       <div className="w-full md:w-1/3 flex flex-col justify-center items-center p-8 bg-white">
           <div className="w-full max-w-md">
             <h1 className="text-center text-3xl font-bold mb-8">Registrasi Akun!</h1>
             
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Name Input */}
               <div>
 
 
@@ -64,7 +98,6 @@ const RegisterPage = () => {
                 />
               </div>
 
-              {/* Email Input */}
               <div>
 
                 <input
@@ -79,7 +112,34 @@ const RegisterPage = () => {
                 />
               </div>
 
-              {/* Password Input */}
+              <input type="text" 
+              id="phone"
+              name="phone"
+              value={formData.phone}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (/^\d{0,12}$/.test(value)) {
+                  setFormData(prev => ({ ...prev, phone: value }));
+                }
+              }}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Phone"
+              required
+              />
+
+              <div>
+
+                <input
+                  type="text"
+                  id="address"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Address"
+                  required
+                />
+              </div>
               <div>
 
                 <div className="relative">
@@ -88,7 +148,12 @@ const RegisterPage = () => {
                     id="password"
                     name="password"
                     value={formData.password}
-                    onChange={handleInputChange}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (value.length <= 12) {
+                          setFormData(prev => ({ ...prev, password: value }));
+    }
+  }}
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Password"
                     required
@@ -112,7 +177,6 @@ const RegisterPage = () => {
                 </div>
               </div>
 
-              {/* Confirm Password Input */}
               <div>
                 <div className="relative">
                   <input

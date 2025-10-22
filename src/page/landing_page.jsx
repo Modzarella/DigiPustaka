@@ -27,7 +27,7 @@ const LandingPage = () => {
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-20">
         <div className="text-center">
-          <h1 class="bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text text-5xl font-bold pb-5">Selamat datang di Digipustaka!</h1>
+          <h1 className="bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text text-5xl font-bold pb-5">Selamat datang di Digipustaka!</h1>
           <p className="text-xl mb-10 text-gray-600 max-w-3xl mx-auto">
             Platform perpustakaan digital untuk membaca, berdiskusi, dan menemukan buku terbaik untukmu.
           </p>

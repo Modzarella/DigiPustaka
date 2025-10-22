@@ -44,6 +44,7 @@ function App() {
         <Route path="/book/:id" element={<BookDetail />} />
         <Route path="/bayar_denda" element={<BayarDenda />} />
         <Route path="/admin" element={<AdminPage />} />
+        <Route path="*" element={<div className="text-align top text-black text-center p-10 text-5xl font-bold ">404 Not Found</div>} />
       </Routes>
     </Router>
   );

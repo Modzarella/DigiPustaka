@@ -17,18 +17,37 @@ const LoginPage = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+const handleSubmit = (e) => {
+  e.preventDefault();
 
-    const { email, password } = formData;
-
-    // Verifikasi hardcode admin
-    if (email === "admin@gmail.com" && password === "admin123") {
-      navigate('/admin');
-    } else {
-      navigate('/home');
-    }
-  };
+  fetch("http://localhost/digipustaka/api/login.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(formData),
+  })
+    .then(async res => {
+      const text = await res.text();
+      try {
+        const data = JSON.parse(text);
+        if (data.status === "success") {
+          if (data.level === "admin") {
+            navigate("/admin");
+          } else {
+            navigate("/home");
+          }
+        } else {
+          alert("Login gagal: " + (data.message || "Email atau password salah."));
+        }
+      } catch (err) {
+        console.error("Invalid JSON:", text);
+        alert("Server error. Coba lagi nanti.");
+      }
+    })
+    .catch(error => {
+      console.error("Login error:", error);
+      alert("Terjadi kesalahan saat login.");
+    });
+};
 
   return (
     <div className="min-h-screen flex">

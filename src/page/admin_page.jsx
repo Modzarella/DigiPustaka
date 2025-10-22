@@ -5,7 +5,6 @@ import AdminRiwayat from "./admin_riwayat";
 import NavbarAdmin from "../components/navbar_admin";
 import AdminInfo from "./admin_info";
 
-// Dummy data for books and users
 const initialBooks = [
   { id: 1, title: "Laskar Pelangi", author: "Andrea Hirata", available: true },
   { id: 2, title: "Hujan", author: "Tere Liye", available: false },
