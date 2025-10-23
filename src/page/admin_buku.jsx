@@ -1,20 +1,96 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+
+const initialBooks = [
+  { id: 1, title: "Laskar Pelangi", author: "Andrea Hirata", available: true },
+  { id: 2, title: "Hujan", author: "Tere Liye", available: false },
+  { id: 3, title: "Filosofi Teras", author: "Henry Manampiring", available: false },
+  { id: 4, title: "Atomic Habits", author: "James Clear", available: true }
+];
 
 export default function AdminBuku({ books, setBooks }) {
-  const [newBook, setNewBook] = useState({ title: "", author: "" });
+  useEffect(() => {
+    fetch("http://localhost/digipustaka/api/book_CRUD.php?action=read")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === "success") {
+          setBooks(data.books);
+        }
+      });
+  }, []);
+
+  const [newBook, setNewBook] = useState({
+    genre_id: "",
+    title: "",
+    publisher: "",
+    year_published: "",
+    stock: "",
+    created_at: "",
+    updated_at: "",
+    deleted_at: "",
+    url_image: "",
+    author: ""
+  });
 
   const handleAddBook = (e) => {
     e.preventDefault();
     if (!newBook.title || !newBook.author) return;
-    setBooks((prev) => [
-      ...prev,
-      { id: Date.now(), title: newBook.title, author: newBook.author, available: true }
-    ]);
-    setNewBook({ title: "", author: "" });
+    fetch("http://localhost/digipustaka/api/book_CRUD.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "create",
+        ...newBook
+      })
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === "success") {
+          alert("Buku berhasil ditambahkan!");
+          setBooks((prev) => [
+            ...prev,
+            {
+              id: data.id || Date.now(), 
+              title: newBook.title,
+              author: newBook.author,
+              available: true
+            }
+          ]);
+          setNewBook({
+            genre_id: "",
+            title: "",
+            publisher: "",
+            year_published: "",
+            stock: "",
+            created_at: "",
+            updated_at: "",
+            deleted_at: "",
+            url_image: "",
+            author: ""
+          });
+        } else {
+          alert("Gagal tambah: " + data.message);
+        }
+      });
   };
 
   const handleDeleteBook = (id) => {
-    setBooks((prev) => prev.filter((b) => b.id !== id));
+    fetch("http://localhost/digipustaka/api/book_CRUD.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "delete",
+        id: id
+      })
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === "success") {
+          alert("Buku berhasil dihapus!");
+          setBooks((prev) => prev.filter((b) => b.id !== id));
+        } else {
+          alert("Gagal hapus: " + data.message);
+        }
+      });
   };
 
   return (

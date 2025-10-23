@@ -5,12 +5,7 @@ import AdminRiwayat from "./admin_riwayat";
 import NavbarAdmin from "../components/navbar_admin";
 import AdminInfo from "./admin_info";
 
-const initialBooks = [
-  { id: 1, title: "Laskar Pelangi", author: "Andrea Hirata", available: true },
-  { id: 2, title: "Hujan", author: "Tere Liye", available: false },
-  { id: 3, title: "Filosofi Teras", author: "Henry Manampiring", available: false },
-  { id: 4, title: "Atomic Habits", author: "James Clear", available: true }
-];
+
 
 const initialUsers = [
   { id: 1, name: "Mamat Gunshop", email: "mamatguntank@gmail.com" },

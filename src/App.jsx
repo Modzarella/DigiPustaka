@@ -19,6 +19,10 @@ import MembershipPage from './page/membership';
 import BookDetail from './page/book_detail';
 import BayarDenda from './page/bayar_denda'; 
 import AdminPage from './page/admin_page';
+import AdminUsers from './page/admin_users';
+import AdminBuku from './page/admin_buku';
+import AdminRiwayat from './page/admin_riwayat';
+import AdminInfo from './page/admin_info';
 
 function App() {
   return (
@@ -44,6 +48,10 @@ function App() {
         <Route path="/book/:id" element={<BookDetail />} />
         <Route path="/bayar_denda" element={<BayarDenda />} />
         <Route path="/admin" element={<AdminPage />} />
+        <Route path="/admin/users" element={<AdminUsers />} />
+        <Route path="/admin/buku" element={<AdminBuku />} />
+        <Route path="/admin/riwayat" element={<AdminRiwayat />} />
+        <Route path="/admin/info" element={<AdminInfo />} />
         <Route path="*" element={<div className="text-align top text-black text-center p-10 text-5xl font-bold ">404 Not Found</div>} />
       </Routes>
     </Router>
